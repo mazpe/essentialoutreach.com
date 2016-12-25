@@ -1,0 +1,4 @@
+title: Leads
+modelClass: MesaDev\LeadSaver\Models\Lead
+toolbar:
+    buttons: reorder_toolbar

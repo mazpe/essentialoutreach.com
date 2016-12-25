@@ -1,0 +1,10 @@
+name: Leads
+form: $/mesadev/leadsaver/models/lead/fields.yaml
+modelClass: MesaDev\LeadSaver\Models\Lead
+defaultRedirect: mesadev/leadsaver/leads
+create:
+    redirect: 'mesadev/leadsaver/leads/update/:id'
+    redirectClose: mesadev/leadsaver/leads
+update:
+    redirect: mesadev/leadsaver/leads
+    redirectClose: mesadev/leadsaver/leads

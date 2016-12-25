@@ -1,0 +1,21 @@
+columns:
+    first_name:
+        label: 'First Name'
+        type: text
+        searchable: true
+        sortable: true
+    last_name:
+        label: 'Last Name'
+        type: text
+        searchable: true
+        sortable: true
+    email:
+        label: Email
+        type: text
+        searchable: true
+        sortable: true
+    source:
+        label: Source
+        type: text
+        searchable: true
+        sortable: true

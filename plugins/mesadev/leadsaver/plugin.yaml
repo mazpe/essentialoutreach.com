@@ -1,0 +1,11 @@
+plugin:
+    name: 'mesadev.leadsaver::lang.plugin.name'
+    description: 'mesadev.leadsaver::lang.plugin.description'
+    author: 'Lester Ariel Mesa'
+    icon: oc-icon-group
+    homepage: ''
+navigation:
+    main-menu-item:
+        label: Leads
+        url: mesadev/leadsaver/leads
+        icon: icon-group

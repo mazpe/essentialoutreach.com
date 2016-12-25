@@ -1,0 +1,5 @@
+1.0.1:
+    - 'Initialize plugin.'
+1.0.2:
+    - 'Created table mesadev_leadsaver_leads'
+    - builder_table_create_mesadev_leadsaver_leads.php
