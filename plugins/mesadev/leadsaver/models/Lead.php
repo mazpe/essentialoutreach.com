@@ -13,7 +13,15 @@ class Lead extends Model
      * Validation
      */
     public $rules = [
+        'first_name' => 'required|min:3|max:255',
+        'email' => 'required|email',
     ];
+
+//    $validator = Validator::make(Input::all(), $rules);
+//
+//    if ($validator->fails()) {
+//        return Redirect::to('register')->withErrors($validator);
+//    }
 
     /*
      * Disable timestamps by default.
@@ -25,4 +33,6 @@ class Lead extends Model
      * @var string The database table used by the model.
      */
     public $table = 'mesadev_leadsaver_leads';
+
+    protected $fillable = ['first_name', 'last_name', 'email', 'telephone', 'description', 'interest', 'source'];
 }

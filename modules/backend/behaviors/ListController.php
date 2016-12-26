@@ -427,6 +427,15 @@ class ListController extends ControllerBehavior
     //
 
     /**
+     * Called before the list columns are defined.
+     * @param Backend\Widgets\List $host The hosting list widget
+     * @return void
+     */
+    // public function listExtendColumnsBefore($host)
+    // {
+    // }
+
+    /**
      * Called after the list columns are defined.
      * @param \Backend\Widgets\List $host The hosting list widget
      * @return void

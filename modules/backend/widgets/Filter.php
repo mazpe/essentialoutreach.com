@@ -1,11 +1,14 @@
 <?php namespace Backend\Widgets;
 
+use Backend;
+use Backend\Classes\FormField;
+use Backend\FormWidgets\DatePicker;
+use Carbon\Carbon;
 use Db;
 use Str;
 use Lang;
-use Backend;
+use Event;
 use DbDongle;
-use Carbon\Carbon;
 use Backend\Classes\WidgetBase;
 use Backend\Classes\FilterScope;
 use ApplicationException;
@@ -208,9 +211,7 @@ class Filter extends WidgetBase
          * Trigger class event, merge results as viewable array
          */
         $params = func_get_args();
-
         $result = $this->fireEvent('filter.update', [$params]);
-
         if ($result && is_array($result)) {
             return call_user_func_array('array_merge', $result);
         }
@@ -305,7 +306,8 @@ class Filter extends WidgetBase
         /*
          * Extensibility
          */
-        $this->fireSystemEvent('backend.filter.extendQuery', [$query, $scope]);
+        Event::fire('backend.filter.extendQuery', [$this, $query, $scope]);
+        $this->fireEvent('filter.extendQuery', [$query, $scope]);
 
         if (!$searchQuery) {
             return $query->get();
@@ -415,7 +417,8 @@ class Filter extends WidgetBase
         /*
          * Extensibility
          */
-        $this->fireSystemEvent('backend.filter.extendScopesBefore');
+        Event::fire('backend.filter.extendScopesBefore', [$this]);
+        $this->fireEvent('filter.extendScopesBefore');
 
         /*
          * All scopes
@@ -429,7 +432,8 @@ class Filter extends WidgetBase
         /*
          * Extensibility
          */
-        $this->fireSystemEvent('backend.filter.extendScopes');
+        Event::fire('backend.filter.extendScopes', [$this]);
+        $this->fireEvent('filter.extendScopes');
 
         $this->scopesDefined = true;
     }
@@ -739,6 +743,7 @@ class Filter extends WidgetBase
         return $processed;
     }
 
+
     /**
      * Convert an array from the posted dates
      *
@@ -776,6 +781,7 @@ class Filter extends WidgetBase
         }
         return $dates;
     }
+
 
     /**
      * @param mixed $scope

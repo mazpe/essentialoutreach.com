@@ -1,6 +1,7 @@
 <?php namespace Backend\Widgets;
 
 use Lang;
+use Event;
 use Form as FormHelper;
 use Backend\Classes\FormTabs;
 use Backend\Classes\FormField;
@@ -21,8 +22,6 @@ use Exception;
  */
 class Form extends WidgetBase
 {
-    use \Backend\Traits\FormModelSaver;
-
     //
     // Configurable properties
     //
@@ -320,21 +319,12 @@ class Form extends WidgetBase
             $data = $this->getSaveData();
         }
 
-        /*
-         * Fill the model as if it were to be saved
-         */
-        $this->prepareModelsToSave($this->model, $data);
-
-        /*
-         * Data set differs from model
-         */
-        if ($this->data !== $this->model) {
-            $this->data = (object) array_merge((array) $this->data, (array) $data);
+        if (method_exists($this->model, 'forceFill')) {
+            $this->model->forceFill($data);
         }
 
-        /*
-         * Set field values from data source
-         */
+        $this->data = (object) array_merge((array) $this->data, (array) $data);
+
         foreach ($this->allFields as $field) {
             $field->value = $this->getFieldValue($field);
         }
@@ -356,7 +346,8 @@ class Form extends WidgetBase
          * Extensibility
          */
         $dataHolder = (object) ['data' => $saveData];
-        $this->fireSystemEvent('backend.form.beforeRefresh', [$dataHolder]);
+        $this->fireEvent('form.beforeRefresh', [$dataHolder]);
+        Event::fire('backend.form.beforeRefresh', [$this, $dataHolder]);
         $saveData = $dataHolder->data;
 
         /*
@@ -368,7 +359,8 @@ class Form extends WidgetBase
         /*
          * Extensibility
          */
-        $this->fireSystemEvent('backend.form.refreshFields', [$this->allFields]);
+        $this->fireEvent('form.refreshFields', [$this->allFields]);
+        Event::fire('backend.form.refreshFields', [$this, $this->allFields]);
 
         /*
          * If an array of fields is supplied, update specified fields individually.
@@ -396,7 +388,10 @@ class Form extends WidgetBase
         /*
          * Extensibility
          */
-        $eventResults = $this->fireSystemEvent('backend.form.refresh', [$result], false);
+        $eventResults = array_merge(
+            $this->fireEvent('form.refresh', [$result]),
+            Event::fire('backend.form.refresh', [$this, $result])
+        );
 
         foreach ($eventResults as $eventResult) {
             $result = $eventResult + $result;
@@ -420,7 +415,8 @@ class Form extends WidgetBase
         /*
          * Extensibility
          */
-        $this->fireSystemEvent('backend.form.extendFieldsBefore');
+        Event::fire('backend.form.extendFieldsBefore', [$this]);
+        $this->fireEvent('form.extendFieldsBefore');
 
         /*
          * Outside fields
@@ -455,7 +451,8 @@ class Form extends WidgetBase
         /*
          * Extensibility
          */
-        $this->fireSystemEvent('backend.form.extendFields', [$this->allFields]);
+        $this->fireEvent('form.extendFields', [$this->allFields]);
+        Event::fire('backend.form.extendFields', [$this, $this->allFields]);
 
         /*
          * Convert automatic spanned fields

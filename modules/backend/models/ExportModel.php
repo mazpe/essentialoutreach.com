@@ -86,7 +86,6 @@ abstract class ExportModel extends Model
          * Parse options
          */
         $defaultOptions = [
-            'firstRowTitles' => true,
             'useOutput' => false,
             'fileName' => 'export.csv',
             'delimiter' => null,
@@ -119,10 +118,8 @@ abstract class ExportModel extends Model
         /*
          * Add headers
          */
-        if ($options['firstRowTitles']) {
-            $headers = $this->getColumnHeaders($columns);
-            $csv->insertOne($headers);
-        }
+        $headers = $this->getColumnHeaders($columns);
+        $csv->insertOne($headers);
 
         /*
          * Add records

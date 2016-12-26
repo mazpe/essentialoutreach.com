@@ -8,6 +8,7 @@ use File;
 use View;
 use Lang;
 use Flash;
+use Event;
 use Config;
 use Session;
 use Request;
@@ -41,7 +42,7 @@ use Illuminate\Http\RedirectResponse;
 class Controller
 {
     use \System\Traits\AssetMaker;
-    use \System\Traits\EventEmitter;
+    use \October\Rain\Support\Traits\Emitter;
 
     /**
      * @var \Cms\Classes\Theme A reference to the CMS theme processed by the controller.
@@ -179,7 +180,10 @@ class Controller
         /*
          * Extensibility
          */
-        if ($event = $this->fireSystemEvent('cms.page.beforeDisplay', [$url, $page])) {
+        if (
+            ($event = $this->fireEvent('page.beforeDisplay', [$url, $page], true)) ||
+            ($event = Event::fire('cms.page.beforeDisplay', [$this, $url, $page], true))
+        ) {
             if ($event instanceof Page) {
                 $page = $event;
             }
@@ -219,7 +223,10 @@ class Controller
         /*
          * Extensibility
          */
-        if ($event = $this->fireSystemEvent('cms.page.display', [$url, $page, $result])) {
+        if (
+            ($event = $this->fireEvent('page.display', [$url, $page, $result], true)) ||
+            ($event = Event::fire('cms.page.display', [$this, $url, $page, $result], true))
+        ) {
             return $event;
         }
 
@@ -319,7 +326,10 @@ class Controller
         /*
          * Extensibility
          */
-        if ($event = $this->fireSystemEvent('cms.page.init', [$page])) {
+        if (
+            ($event = $this->fireEvent('page.init', [$page], true)) ||
+            ($event = Event::fire('cms.page.init', [$this, $page], true))
+        ) {
             return $event;
         }
 
@@ -352,7 +362,10 @@ class Controller
         /*
          * Extensibility
          */
-        if ($event = $this->fireSystemEvent('cms.page.beforeRenderPage', [$page])) {
+        if (
+            ($event = $this->fireEvent('page.beforeRenderPage', [$page], true)) ||
+            ($event = Event::fire('cms.page.beforeRenderPage', [$this, $page], true))
+        ) {
             $this->pageContents = $event;
         }
         else {
@@ -397,7 +410,10 @@ class Controller
         /*
          * Extensibility
          */
-        if ($event = $this->fireSystemEvent('cms.page.start')) {
+        if (
+            ($event = $this->fireEvent('page.start', [], true)) ||
+            ($event = Event::fire('cms.page.start', [$this], true))
+        ) {
             return $event;
         }
 
@@ -406,11 +422,9 @@ class Controller
          */
         if ($this->layoutObj) {
             CmsException::mask($this->layout, 300);
-            $response = (
-                ($result = $this->layoutObj->onStart()) ||
+            $response = (($result = $this->layoutObj->onStart()) ||
                 ($result = $this->layout->runComponents()) ||
-                ($result = $this->layoutObj->onBeforePageStart())
-            ) ? $result : null;
+                ($result = $this->layoutObj->onBeforePageStart())) ? $result: null;
             CmsException::unmask();
 
             if ($response) {
@@ -422,11 +436,9 @@ class Controller
          * Run page functions
          */
         CmsException::mask($this->page, 300);
-        $response = (
-            ($result = $this->pageObj->onStart()) ||
+        $response = (($result = $this->pageObj->onStart()) ||
             ($result = $this->page->runComponents()) ||
-            ($result = $this->pageObj->onEnd())
-        ) ? $result : null;
+            ($result = $this->pageObj->onEnd())) ? $result : null;
         CmsException::unmask();
 
         if ($response) {
@@ -445,7 +457,10 @@ class Controller
         /*
          * Extensibility
          */
-        if ($event = $this->fireSystemEvent('cms.page.end')) {
+        if (
+            ($event = $this->fireEvent('page.end', [], true)) ||
+            ($event = Event::fire('cms.page.end', [$this], true))
+        ) {
             return $event;
         }
 
@@ -466,7 +481,7 @@ class Controller
 
         $dataHolder = (object) ['content' => $content];
 
-        $this->fireSystemEvent('cms.page.postprocess', [$url, $page, $dataHolder]);
+        Event::fire('cms.page.postprocess', [$this, $url, $page, $dataHolder]);
 
         return $dataHolder->content;
     }
@@ -551,7 +566,8 @@ class Controller
         /*
          * Extensibility
          */
-        $this->fireSystemEvent('cms.page.initComponents', [$this->page, $this->layout]);
+        $this->fireEvent('page.initComponents', [$this->page, $this->layout]);
+        Event::fire('cms.page.initComponents', [$this, $this->page, $this->layout]);
     }
 
     //
@@ -734,7 +750,10 @@ class Controller
         /*
          * Extensibility
          */
-        if ($event = $this->fireSystemEvent('cms.page.render', [$contents])) {
+        if (
+            ($event = $this->fireEvent('page.render', [$contents], true)) ||
+            ($event = Event::fire('cms.page.render', [$this, $contents], true))
+        ) {
             return $event;
         }
 
@@ -762,15 +781,9 @@ class Controller
         }
 
         /*
-         * Extensibility
-         */
-        if ($event = $this->fireSystemEvent('cms.page.beforeRenderPartial', [$name])) {
-            $partial = $event;
-        }
-        /*
          * Process Component partial
          */
-        elseif (strpos($name, '::') !== false) {
+        if (strpos($name, '::') !== false) {
 
             list($componentAlias, $partialName) = explode('::', $name);
 
@@ -789,10 +802,10 @@ class Controller
                         return false;
                     }
                 }
-            }
             /*
              * Component alias is supplied
              */
+            }
             else {
                 if (($componentObj = $this->findComponentByName($componentAlias)) === null) {
                     if ($throwException) {
@@ -853,6 +866,7 @@ class Controller
         /*
          * Run functions for CMS partials only (Cms\Classes\Partial)
          */
+
         if ($partial instanceof Partial) {
             $this->partialStack->stackPartial();
 
@@ -863,9 +877,8 @@ class Controller
                 // Not sure if they're needed there by the requirements,
                 // but there were problems with array-typed properties used by Static Pages 
                 // snippets and setComponentPropertiesFromParams(). --ab
-                if ($component == 'viewBag') {
+                if ($component == 'viewBag')
                     continue;
-                }
 
                 list($name, $alias) = strpos($component, ' ')
                     ? explode(' ', $component)
@@ -902,7 +915,7 @@ class Controller
         CmsException::mask($partial, 400);
         $this->loader->setObject($partial);
         $template = $this->twig->loadTemplate($partial->getFilePath());
-        $partialContent = $template->render(array_merge($this->vars, $parameters));
+        $result = $template->render(array_merge($this->vars, $parameters));
         CmsException::unmask();
 
         if ($partial instanceof Partial) {
@@ -910,15 +923,7 @@ class Controller
         }
 
         $this->vars = $vars;
-
-        /*
-         * Extensibility
-         */
-        if ($event = $this->fireSystemEvent('cms.page.renderPartial', [$name, &$partialContent])) {
-            return $event;
-        }
-
-        return $partialContent;
+        return $result;
     }
 
     /**
@@ -933,7 +938,10 @@ class Controller
         /*
          * Extensibility
          */
-        if ($event = $this->fireSystemEvent('cms.page.beforeRenderContent', [$name])) {
+        if (
+            ($event = $this->fireEvent('page.beforeRenderContent', [$name], true)) ||
+            ($event = Event::fire('cms.page.beforeRenderContent', [$this, $name], true))
+        ) {
             $content = $event;
         }
         /*
@@ -963,7 +971,10 @@ class Controller
         /*
          * Extensibility
          */
-        if ($event = $this->fireSystemEvent('cms.page.renderContent', [$name, &$fileContent])) {
+        if (
+            ($event = $this->fireEvent('page.renderContent', [$name, $fileContent], true)) ||
+            ($event = Event::fire('cms.page.renderContent', [$this, $name, $fileContent], true))
+        ) {
             return $event;
         }
 

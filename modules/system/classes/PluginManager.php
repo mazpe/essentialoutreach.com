@@ -74,10 +74,7 @@ class PluginManager
         $this->metaFile = storage_path('cms/disabled.json');
         $this->loadDisabled();
         $this->loadPlugins();
-
-        if ($this->app->runningInBackend()) {
-            $this->loadDependencies();
-        }
+        $this->loadDependencies();
     }
 
     /**
@@ -314,7 +311,6 @@ class PluginManager
         }
 
         $classId = $this->getIdentifier($namespace);
-
         return $this->plugins[$classId];
     }
 
@@ -340,7 +336,6 @@ class PluginManager
     public function hasPlugin($namespace)
     {
         $classId = $this->getIdentifier($namespace);
-
         return isset($this->plugins[$classId]);
     }
 
@@ -395,7 +390,7 @@ class PluginManager
     }
 
     /**
-     * Resolves a plugin identifier from a plugin class name or object.
+     * Returns a plugin identifier from a Plugin class name or object
      * @param mixed Plugin class name or object
      * @return string Identifier in format of Vendor.Plugin
      */
@@ -493,11 +488,9 @@ class PluginManager
     public function isDisabled($id)
     {
         $code = $this->getIdentifier($id);
-
         if (array_key_exists($code, $this->disabledPlugins)) {
             return true;
         }
-
         return false;
     }
 
@@ -506,7 +499,8 @@ class PluginManager
      */
     protected function writeDisabled()
     {
-        File::put($this->metaFile, json_encode($this->disabledPlugins));
+        $path = $this->metaFile;
+        File::put($path, json_encode($this->disabledPlugins));
     }
 
     /**
@@ -601,12 +595,11 @@ class PluginManager
             }
 
             $disable = false;
-
             foreach ($required as $require) {
-                if (!$pluginObj = $this->findByIdentifier($require)) {
+                if (!$this->hasPlugin($require)) {
                     $disable = true;
                 }
-                elseif ($pluginObj->disabled) {
+                elseif (($pluginObj = $this->findByIdentifier($require)) && $pluginObj->disabled) {
                     $disable = true;
                 }
             }

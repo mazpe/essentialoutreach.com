@@ -12,7 +12,6 @@
     // @todo Provide an interface for configuration
     // - Custom loader CSS class
     // - Custom stripe loader color
-    // - Flash message interval
 
     var LOADER_CLASS = 'oc-loading';
 
@@ -44,7 +43,7 @@
             $field
 
         $.each(fields, function(fieldName, fieldMessages) {
-            $field = $('[data-validate-for="'+fieldName+'"]', $this)
+            $field = $('[data-validate-for='+fieldName+']', $this)
             messages = $.merge(messages, fieldMessages)
             if (!!$field.length) {
                 if (!$field.text().length || $field.data('emptyMode') == true) {
@@ -55,10 +54,6 @@
                 $field.addClass('visible')
             }
         })
-
-        if (!!$container.length) {
-            $container = $('[data-validate-error]')
-        }
 
         if (!!$container.length) {
             var $oldMessages = $('[data-message]', $container)
@@ -241,7 +236,7 @@
     FlashMessage.DEFAULTS = {
         class: 'success',
         text: 'Default text',
-        interval: 5
+        interval: 2
     }
 
     if ($.oc === undefined)

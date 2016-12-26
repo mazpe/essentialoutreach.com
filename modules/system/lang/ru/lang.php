@@ -223,7 +223,6 @@ return [
         'plugin_description' => 'Описание',
         'plugin_version' => 'Версия',
         'plugin_author' => 'Автор',
-        'plugin_not_found' => 'Plugin not found',
         'core_current_build' => 'Текущая сборка',
         'core_build' => 'Сборка :build',
         'core_build_help' => 'Последняя доступная сборка.',

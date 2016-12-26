@@ -189,34 +189,23 @@ class CombineAssets
         $this->localPath = $cacheInfo['path'];
         $this->storagePath = storage_path('cms/combiner/assets');
 
-        /*
-         * Analyse cache information
-         */
-        $lastModifiedTime = gmdate("D, d M Y H:i:s \G\M\T", array_get($cacheInfo, 'lastMod'));
-        $etag = array_get($cacheInfo, 'etag');
-        $mime = (array_get($cacheInfo, 'extension') == 'css')
-            ? 'text/css'
-            : 'application/javascript';
+        $this->setHashOnCombinerFilters($cacheKey);
+
+        $combiner = $this->prepareCombiner($cacheInfo['files']);
+        $contents = $combiner->dump();
+        $mime = ($cacheInfo['extension'] == 'css') ? 'text/css' : 'application/javascript';
+
+        header_remove();
+        $response = Response::make($contents);
+        $response->header('Content-Type', $mime);
 
         /*
          * Set 304 Not Modified header, if necessary
          */
-        header_remove();
-        $response = Response::make();
-        $response->header('Content-Type', $mime);
+        $lastModifiedTime = gmdate("D, d M Y H:i:s \G\M\T", array_get($cacheInfo, 'lastMod'));
         $response->setLastModified(new DateTime($lastModifiedTime));
-        $response->setEtag($etag);
-        $modified = !$response->isNotModified(App::make('request'));
-
-        /*
-         * Request says response is cached, no code evaluation needed
-         */
-        if ($modified) {
-            $this->setHashOnCombinerFilters($cacheKey);
-            $combiner = $this->prepareCombiner($cacheInfo['files']);
-            $contents = $combiner->dump();
-            $response->setContent($contents);
-        }
+        $response->setEtag(array_get($cacheInfo, 'etag'));
+        $response->isNotModified(App::make('request'));
 
         return $response;
     }

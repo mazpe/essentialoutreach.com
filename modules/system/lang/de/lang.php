@@ -175,7 +175,6 @@ return [
         'plugin_description' => 'Beschreibung',
         'plugin_version' => 'Version',
         'plugin_author' => 'Autor',
-        'plugin_not_found' => 'Plugin not found',
         'core_current_build' => 'Aktueller Build',
         'core_build' => 'Build :build',
         'core_build_help' => 'Aktuellster Build ist verfügbar.',

@@ -721,10 +721,8 @@ class ImportExportController extends ControllerBehavior
 
     protected function getRedirectUrlForType($type)
     {
-        $redirect = $this->getConfig($type.'[redirect]');
-
-        if ($redirect !== null) {
-            return $redirect ? Backend::url($redirect) : 'javascript:;';
+        if ($redirect = $this->getConfig($type.'[redirect]')) {
+            return Backend::url($redirect);
         }
 
         return $this->controller->actionUrl($type);

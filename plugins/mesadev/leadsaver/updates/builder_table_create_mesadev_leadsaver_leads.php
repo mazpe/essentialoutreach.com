@@ -15,6 +15,7 @@ class BuilderTableCreateMesadevLeadsaverLeads extends Migration
             $table->string('first_name')->nullable();
             $table->string('last_name')->nullable();
             $table->string('email')->nullable();
+            $table->string('telephone')->nullable();
             $table->text('description')->nullable();
             $table->string('interest')->nullable();
         });

@@ -2628,7 +2628,7 @@ function removeElement(){$element.remove()}
 function remove(){window.clearInterval(timer)
 $element.removeClass('in')
 $.support.transition&&$element.hasClass('fade')?$element.one($.support.transition.end,removeElement).emulateTransitionEnd(500):removeElement()}}
-FlashMessage.DEFAULTS={class:'success',text:'Default text',interval:5}
+FlashMessage.DEFAULTS={class:'success',text:'Default text',interval:2}
 if($.oc===undefined)
 $.oc={}
 $.oc.flashMsg=FlashMessage

@@ -28,7 +28,6 @@ Utility styles are a collection of useful classes designed to reduce the need to
 
 ```css
 .t-ww { word-wrap: break-word; }
-.t-nw { white-space: nowrap; }
 ```
 
 ### Positioning

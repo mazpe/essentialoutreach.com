@@ -7,66 +7,53 @@
   </div>
 </div>
 
+{% if errors %}
+<ul>
+    <li class="red accent-1"><p>{{ errors.first('Lead.first_name') }}</p></li>
+    <li class="red accent-1"><p>{{ errors.first('Lead.email') }}</p></li>
+</ul>
+{% endif %}
+
 <div class="lt-vertical-spacer"></div>
 
-<form class="col s12">
+<form class="col s12" action="/leadsaver" method="post" >
+  <input type="hidden" name="Lead[source]" value="Contact Form">
   <div class="lt-row row">
     <div class="input-field lt-col col s6">
-      <input type="text" class="validate" id="first_name">
+      <input type="text" class="validate" id="first_name" name="Lead[first_name]">
       <label for="first_name" class="active">First Name</label>
     </div>
     <div class="input-field lt-col col s6">
-      <input type="text" id="last_name">
+      <input type="text" id="last_name" name="Lead[last_name]">
       <label for="last_name">Last Name</label>
     </div>
   </div>
   <div class="lt-row row">
-    <div class="input-field lt-col col s12">
-      <input type="email" class="validate" id="email">
+    <div class="input-field lt-col col s6">
+      <input type="email" class="validate" id="email" name="Lead[email]">
       <label data-success="right" data-error="wrong" for="email">Email</label>
+    </div>
+    <div class="input-field lt-col col s6">
+      <input type="text" id="telephone" name="Lead[telephone]">
+      <label for="telephone">Telephone</label>
     </div>
   </div>
   <div class="lt-row row">
     <div class="input-field lt-col col s12">
-      <textarea id="textarea1" class="materialize-textarea"></textarea>
+      <textarea id="textarea1" class="materialize-textarea" name="Lead[name]"></textarea>
       <label for="textarea1">Description</label>
     </div>
   </div>
   <div class="lt-row row">
     <div class="input-field lt-col col s12">
-      <select multiple>
-        <option value="" disabled selected>Choose your option</option>
-        <option value="1">Option 1</option>
-        <option value="2">Option 2</option>
-        <option value="3">Option 3</option>
+      <select multiple name="Lead[interest]">
+        <option value="" disabled selected>What is your Intertest?</option>
+        <option value="Web Development">Web Development</option>
+        <option value="Web Design">Web Design</option>
+        <option value="Social Media">Social Media</option>
+        <option value="Domain Management">Domain Management</option>
       </select>
       <label>Choose Option</label>
-    </div>
-  </div>
-  <div class="lt-row row">
-    <div class="lt-col col s12">
-      <div class="file-field input-field">
-        <div class="btn">
-          <span>File</span>
-          <input type="file" multiple>
-        </div>
-        <div class="file-path-wrapper">
-          <input class="file-path validate" type="text" placeholder="Upload one or more files">
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="lt-row row">
-    <div class="lt-col col s12">
-      <label for="datepicker">Set the Date</label>
-      <input type="date" class="datepicker" id="datepicker">
-    </div>
-  </div>
-
-  <div class="lt-row row">
-    <div class="lt-col col s12">
-      <input type="checkbox" class="filled-in" id="filled-in-box" checked="checked" />
-      <label for="filled-in-box">Send copy to my email</label>
     </div>
   </div>
 

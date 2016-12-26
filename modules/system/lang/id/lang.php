@@ -173,7 +173,6 @@ return [
         'plugin_description' => 'Jabaran',
         'plugin_version' => 'Versi',
         'plugin_author' => 'Penulis',
-        'plugin_not_found' => 'Plugin not found',
         'core_current_build' => 'Binaan kini',
         'core_build' => 'Binaan :build',
         'core_build_help' => 'Tersedia binaan terbaru.',

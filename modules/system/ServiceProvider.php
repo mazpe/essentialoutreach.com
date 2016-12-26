@@ -84,7 +84,7 @@ class ServiceProvider extends ModuleServiceProvider
         /*
          * Boot plugins
          */
-        PluginManager::instance()->bootAll();
+        $pluginManager = PluginManager::instance()->bootAll();
 
         parent::boot('system');
     }

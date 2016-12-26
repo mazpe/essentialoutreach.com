@@ -58,7 +58,7 @@ class MarkdownEditor extends FormWidgetBase
         $this->vars['mode'] = $this->mode;
         $this->vars['stretch'] = $this->formField->stretch;
         $this->vars['size'] = $this->formField->size;
-        $this->vars['name'] = $this->getFieldName();
+        $this->vars['name'] = $this->formField->getName();
         $this->vars['value'] = $this->getLoadValue();
     }
 
@@ -74,7 +74,7 @@ class MarkdownEditor extends FormWidgetBase
 
     public function onRefresh()
     {
-        $value = post($this->getFieldName());
+        $value = post($this->formField->getName());
         $previewHtml = Markdown::parse($value);
 
         return [

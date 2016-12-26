@@ -139,15 +139,9 @@ class Relation extends FormWidgetBase
                 $result = $query->getQuery()->get();
             }
 
-            // Some simpler relations can specify a custom local or foreign "other" key,
-            // which can be detected and implemented here automagically.
-            $primaryKeyName = in_array($relationType, ['hasMany', 'belongsTo', 'hasOne'])
-                ? $relationObject->getOtherKey()
-                : $relationModel->getKeyName();
-
             $field->options = $usesTree
-                ? $result->listsNested($nameFrom, $primaryKeyName)
-                : $result->lists($nameFrom, $primaryKeyName);
+                ? $result->listsNested($nameFrom, $relationModel->getKeyName())
+                : $result->lists($nameFrom, $relationModel->getKeyName());
 
             return $field;
         });

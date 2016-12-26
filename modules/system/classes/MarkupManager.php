@@ -294,7 +294,7 @@ class MarkupManager
      * Tests if a callable type contains a wildcard, also acts as a 
      * utility to replace the wildcard with a string.
      * @param  callable  $callable
-     * @param  string|bool $replaceWith
+     * @param  string $replaceWith
      * @return mixed
      */
     protected function isWildCallable($callable, $replaceWith = false)
