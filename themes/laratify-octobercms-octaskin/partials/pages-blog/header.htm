@@ -7,7 +7,13 @@
         <div class="valign-wrapper" style="height: 400px;">
           <div class="valign">
             <h2 class="lt-title">Blog</h2>
-            <p class="lt-subtitle flow-text">Information at Your Finger Tip</p>
+            <p class="lt-subtitle flow-text">
+            {% if this.post %}
+                {{ this.post.title }}
+            {% else %}
+                Information at Your Finger Tip
+            {% endif %}
+            </p>
           </div>
         </div>
       </div>

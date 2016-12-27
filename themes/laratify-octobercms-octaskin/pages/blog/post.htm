@@ -1,8 +1,20 @@
-title = "Blog"
-url = "/blog"
+title = "Blog Post"
+url = "/blog/post/:slug"
 layout = "octaskin"
-description = "Information at Your Fingertips"
+description = "Viewing a single blog posts"
 is_hidden = 0
+
+[blogPost]
+slug = "{{ :slug }}"
+categoryPage = "blog/category"
+==
+<?php
+function onEnd()
+{
+    // Optional - set the page title to the post title
+        $this->page->title = $this->post->title;
+}
+?>
 ==
 <section id="lt-header" class="lt-section lt-section-fullwidth section">
   <div class="lt-container container">
@@ -15,7 +27,7 @@ is_hidden = 0
 <section id="lt-mainpage" class="lt-section section">
   <div class="lt-container container">
     <div class="lt-content lt-mainpage-content">
-      {% partial "pages-blog/mainpage" %}
+      {% partial "pages-blog/post" %}
     </div>
   </div>
 </section>

@@ -72,6 +72,7 @@ description = "Octaskin Layout"
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/{{ this.theme.jQuery_version }}/jquery.min.js"></script>
     <script src="{{ ['assets/js/materialize.min.js','assets/js/theme.js']|theme }}"></script>
+    <script type="text/javascript" src="{{ ['@framework']|theme}}.js"></script>
 
     {% if this.theme.load_octobercms_framework %}
       {% framework extras %}
